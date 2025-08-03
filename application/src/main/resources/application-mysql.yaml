@@ -2,7 +2,7 @@ spring:
   r2dbc:
     url: r2dbc:pool:mysql://localhost:3306/halo
     username: root
-    password: openmysql
+    password: fgwyhhy2008
   sql:
     init:
       mode: always
