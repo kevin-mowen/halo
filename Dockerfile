@@ -1,34 +1,32 @@
 # ============================
-# ✅ 推荐重构版 Dockerfile
+# Halo 镜像（多阶段构建）
 # ============================
-# ✔ 兼容国内构建（用 dragonwell 基础镜像）
-# ✔ 支持 Spring Boot layer jar 结构
-# ✔ 设置合理的默认参数和时区
-# ✔ 保持与原 Dockerfile 功能一致
 
 # ============ Builder ============
-FROM dragonwell-registry.cn-hangzhou.cr.aliyuncs.com/dragonwell/dragonwell:21.0.4-extended-ga-ubuntu AS builder
-
+FROM crpi-0nyhmsk4kaamfjub.cn-guangzhou.personal.cr.aliyuncs.com/mokevin/dragonwell:21 AS builder
 
 WORKDIR /application
-# 复制项目完整代码（推荐完整构建）
+
+# 复制完整 Halo 项目源码
 COPY . .
 
-# 使用 gradle wrapper 构建 halo 的 jar 包（跳过测试）
+# 构建 Spring Boot jar（跳过测试）
 RUN ./gradlew :application:bootJar -x test
 
 # ============ Runtime ============
-FROM dragonwell-registry.cn-hangzhou.cr.aliyuncs.com/dragonwell/dragonwell:21.0.4-extended-ga-ubuntu
+FROM crpi-0nyhmsk4kaamfjub.cn-guangzhou.personal.cr.aliyuncs.com/mokevin/dragonwell:21
 LABEL maintainer="mokevin <kevin_mowen@163.com>"
 
 WORKDIR /application
 
-# 解压 spring boot 的 Layered jar 结构
+# 从 Builder 阶段复制构建好的 Jar
 COPY --from=builder /application/application/build/libs/*.jar app.jar
+
+# 支持 Spring Boot Layered jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
-COPY --from=builder /application/application/build/libs/*.jar app.jar
-COPY --from=builder /application/README.md ./
+# 可选：复制 README 或其他文件
+COPY --from=builder /application/application/README.md ./
 
 # 设置环境变量
 ENV JVM_OPTS="-Xmx512m -Xms256m" \
@@ -40,6 +38,7 @@ ENV JVM_OPTS="-Xmx512m -Xms256m" \
 RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
     && echo $TZ > /etc/timezone
 
+# 暴露 Halo 默认端口
 EXPOSE 8090
 
 # 启动 Halo（支持虚拟线程）
