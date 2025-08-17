@@ -25,7 +25,7 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
 # 安装依赖，禁用可选依赖来避免平台特定问题
-RUN pnpm install --frozen-lockfile --ignore-optional
+RUN pnpm install --frozen-lockfile --no-optional
 
 # 复制前端源码
 COPY ui .
