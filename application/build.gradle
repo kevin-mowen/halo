@@ -73,7 +73,7 @@ bootJar {
 }
 
 gitProperties {
-    dotGitDirectory = layout.settingsDirectory.dir('.git')
+    dotGitDirectory = rootProject.layout.projectDirectory.dir('.git')
 }
 
 tasks.named('jar') {
