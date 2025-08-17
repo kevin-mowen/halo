@@ -87,6 +87,8 @@
   },
   "devDependencies": {
     "@types/linkifyjs": "^2.1.7",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vitejs/plugin-vue-jsx": "^4.2.0",
     "release-it": "^16.1.5"
   },
   "peerDependencies": {
