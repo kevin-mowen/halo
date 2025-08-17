@@ -55,9 +55,10 @@ export function createViteConfig(options: Options) {
 
   return defineConfig({
     base,
-    experimental: {
-      enableNativePlugin: isProduction,
-    },
+    // 禁用实验性功能以避免Docker环境兼容性问题
+    // experimental: {
+    //   enableNativePlugin: isProduction,
+    // },
     plugins: [
       ...sharedPlugins,
       ...setupLibraryExternal(isProduction, base, entryFile),
@@ -82,8 +83,9 @@ export function createViteConfig(options: Options) {
       chunkSizeWarningLimit: 2048,
       rollupOptions: {
         output: {
-          advancedChunks: {
-            groups: [
+          // 使用标准的manualChunks替代advancedChunks
+          manualChunks: {
+            vendor: [
               "lodash-es",
               "vue-grid-layout",
               "transliteration",
@@ -94,10 +96,7 @@ export function createViteConfig(options: Options) {
               "floating-vue",
               "@he-tree/vue",
               "pretty-bytes",
-            ].map((name) => ({
-              name: "vendor",
-              test: name,
-            })),
+            ],
           },
         },
       },
