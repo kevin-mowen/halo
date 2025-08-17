@@ -118,7 +118,7 @@ tasks.register('copyUiDist', Copy) {
     from project(':ui').layout.buildDirectory.dir('dist')
     into layout.buildDirectory.dir('resources/main')
     configure {
-        mustRunAfter project(':ui').tasks.named('build')
+        dependsOn project(':ui').tasks.named('build')
     }
 }
 

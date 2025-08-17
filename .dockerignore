@@ -1,11 +1,60 @@
+# Git
 .github
 .git
-node_modules
-**/node_modules
-gradle/caches
-gradle/daemon
-gradle/jdks
-gradle/native
-gradle/wrapper/dists
-gradle/.tmp
+.gitignore
+.gitmodules
+
+# Documentation
+*.md
+docs/
+README*
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
+logs/
+
+# Build artifacts (优化后保留必要的)
+**/build/
+**/target/
+.gradle/
+gradle/caches/
+gradle/daemon/
+gradle/wrapper/dists/
+gradle/native/
+gradle/jdks/
+gradle/.tmp/
+
+# Node.js
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Temporary files
+.tmp/
+temp/
+
+# Test
+test-results/
+coverage/
+
+# Docker related (不需要包含在镜像中)
+docker-compose.test.yml
+docker-compose.production.yml
+
+# Others
+.env*
+*.tmp

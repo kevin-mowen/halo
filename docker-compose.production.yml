@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # Halo + UI 合并应用服务
+  halo-app:
+    image: your-registry/halo-ui:latest  # 替换为你的镜像地址
+    container_name: halo-app
+    restart: unless-stopped
+    ports:
+      - "8090:8090"  # Halo后端端口
+      - "3000:3000"  # UI前端端口
+    environment:
+      # 数据库配置（外部PostgreSQL）
+      SPRING_R2DBC_URL: r2dbc:postgresql://your-postgres-host:5432/halo
+      SPRING_R2DBC_USERNAME: your_postgres_user
+      SPRING_R2DBC_PASSWORD: your_postgres_password
+      
+      # SQL初始化配置
+      SPRING_SQL_INIT_PLATFORM: postgresql
+      SPRING_SQL_INIT_MODE: always
+      
+      # Halo应用配置
+      HALO_EXTERNAL_URL: https://your-domain.com
+      HALO_WORK_DIR: /root/.halo2
+      
+      # JVM配置
+      JVM_OPTS: "-Xmx1g -Xms512m"
+      
+      # 时区配置
+      TZ: Asia/Shanghai
+      
+      # Node.js环境
+      NODE_ENV: production
+    volumes:
+      # 挂载Halo工作目录（持久化数据）
+      - halo_data:/root/.halo2
+      
+      # 挂载配置文件（可选，用于覆盖默认配置）
+      # - ./application.yaml:/root/.halo2/application.yaml:ro
+      
+      # 挂载主题和插件（可选）
+      # - ./themes:/root/.halo2/themes
+      # - ./plugins:/root/.halo2/plugins
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8090/actuator/health && curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    depends_on:
+      - postgres
+
+  # 外部PostgreSQL数据库示例（可选，如果你有独立的数据库服务）
+  postgres:
+    image: postgres:15-alpine
+    container_name: halo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: halo
+      POSTGRES_USER: halo_user
+      POSTGRES_PASSWORD: halo_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U halo_user -d halo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  halo_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+# 网络配置（可选）
+networks:
+  default:
+    driver: bridge

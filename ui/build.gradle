@@ -23,13 +23,18 @@ tasks.register('clean', Delete) {
   }
 }
 
-tasks.register('build', PnpmTask) {
-  dependsOn tasks.named('check'), tasks.named('buildPackages')
-  pnpmCommand = ['run', 'build']
-  inputs.files(fileTree(layout.projectDirectory) {
-    include 'console-src/**', 'uc-src/**', 'src/**', 'public/**', '*.js', '*.json', '*.yaml', 'index.html'
-    exclude '**/node_modules/**', '**/build/**', '**/dist/**'
-  })
+tasks.register('buildConsole', PnpmTask) {
+  dependsOn tasks.named('buildPackages')
+  pnpmCommand = ['run', 'build:console']
+}
+
+tasks.register('buildUc', PnpmTask) {
+  dependsOn tasks.named('buildPackages')
+  pnpmCommand = ['run', 'build:uc']
+}
+
+tasks.register('build') {
+  dependsOn tasks.named('buildConsole'), tasks.named('buildUc')
   outputs.dir(layout.buildDirectory.dir('dist'))
   configure {
     shouldRunAfter tasks.named('clean')

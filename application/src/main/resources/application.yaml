@@ -10,13 +10,15 @@ spring:
   output:
     ansi:
       enabled: detect
-  r2dbc:
-    url: ${SPRING_R2DBC_URL:r2dbc:h2:file:///${halo.work-dir}/db/halo-next?MODE=MySQL&DB_CLOSE_ON_EXIT=FALSE}
-    username: ${SPRING_R2DBC_USERNAME:admin}
-    password: ${SPRING_R2DBC_PASSWORD:123456}
   sql:
     init:
-      platform: ${SPRING_SQL_INIT_PLATFORM:h2}
+      platform: ${SPRING_SQL_INIT_PLATFORM:postgresql}
+      schema-locations: classpath:schema-${SPRING_SQL_INIT_PLATFORM:postgresql}.sql
+      mode: ${SPRING_SQL_INIT_MODE:always}
+  r2dbc:
+    url: ${SPRING_R2DBC_URL:r2dbc:postgresql://localhost:5432/halo}
+    username: ${SPRING_R2DBC_USERNAME:postgres}
+    password: ${SPRING_R2DBC_PASSWORD:fgwyhhy2008}
   codec:
     max-in-memory-size: 10MB
   messages:
@@ -38,9 +40,9 @@ spring:
       enabled: true
 
 halo:
-  # 指定halo对外暴露的站点地址
-  external-url: http://localhost:8090/
-  work-dir: ${user.home}/.halo2
+  # 指定halo对外暴露的站点地址（支持环境变量配置）
+  external-url: ${HALO_EXTERNAL_URL:http://localhost:8090/}
+  work-dir: ${HALO_WORK_DIR:${user.home}/.halo2}
   attachment:
     resource-mappings:
       - pathPattern: /upload/**
@@ -51,19 +53,6 @@ halo:
       - name: email
         href: /password-reset/email
         icon: /images/password-reset-methods/email.svg
-  # FastGPT integration configuration
-  fastgpt:
-    enabled: false
-    api-url: https://api.fastgpt.in
-    api-key: # Set your FastGPT API key here
-    default-chat-id: # Set default chat ID if needed
-    connect-timeout: 30000
-    read-timeout: 60000
-    auto-publish: false
-    default-category: # Default category for FastGPT generated posts
-    default-tags: # Default tags for FastGPT generated posts (comma separated)
-    max-content-length: 100000
-    enable-content-filter: true
 
 springdoc:
   api-docs:
