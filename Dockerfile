@@ -26,8 +26,8 @@ COPY --from=builder /application/application/build/libs/*.jar app.jar
 # 支持 Spring Boot Layered jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
-# 可选：复制 README 或其他文件
-COPY --from=builder /application/application/README.md ./
+# 可选：复制 README 或其他文件（已跳过，容器运行时不需要）
+# COPY --from=builder /application/README.md ./
 
 # 设置环境变量
 ENV JVM_OPTS="-Xmx512m -Xms256m" \
