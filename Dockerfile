@@ -23,12 +23,6 @@ WORKDIR /application
 # 从 Builder 阶段复制构建好的 Jar
 COPY --from=builder /application/application/build/libs/*.jar app.jar
 
-# 支持 Spring Boot Layered jar
-RUN java -Djarmode=layertools -jar app.jar extract
-
-# 可选：复制 README 或其他文件（已跳过，容器运行时不需要）
-# COPY --from=builder /application/README.md ./
-
 # 设置环境变量
 ENV JVM_OPTS="-Xmx512m -Xms256m" \
     HALO_WORK_DIR="/root/.halo2" \
@@ -42,5 +36,5 @@ RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime \
 # 暴露 Halo 默认端口
 EXPOSE 8090
 
-# 启动 Halo（支持虚拟线程）
-ENTRYPOINT ["sh", "-c", "java -Dreactor.schedulers.defaultBoundedElasticOnVirtualThreads=true $JVM_OPTS org.springframework.boot.loader.launch.JarLauncher $0 $@"]
+# 启动 Halo（直接运行fat jar，支持虚拟线程）
+ENTRYPOINT ["sh", "-c", "java -Dreactor.schedulers.defaultBoundedElasticOnVirtualThreads=true $JVM_OPTS -jar app.jar $0 $@"]
