@@ -16,6 +16,6 @@ export default defineConfig({
   minify: true,
   exports: true,
   dts: {
-    tsgo: true,
+    tsgo: false, // 禁用 tsgo 以避免 Linux 平台兼容性问题
   },
 });

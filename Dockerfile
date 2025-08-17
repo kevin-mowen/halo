@@ -5,8 +5,13 @@
 # ============ Node.js Builder ============
 FROM node:18-alpine AS node-builder
 
-# 安装pnpm
-RUN npm install -g pnpm@10.12.4
+# 安装必要的构建工具和 pnpm
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    libc6-compat && \
+    npm install -g pnpm@10.12.4
 
 WORKDIR /ui
 
@@ -14,8 +19,13 @@ WORKDIR /ui
 COPY ui/package.json ui/pnpm-lock.yaml ui/pnpm-workspace.yaml ./
 COPY ui/packages ./packages
 
-# 安装依赖
-RUN pnpm install --frozen-lockfile
+# 设置环境变量以优化依赖安装
+ENV NODE_ENV=production
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+# 安装依赖，禁用可选依赖来避免平台特定问题
+RUN pnpm install --frozen-lockfile --ignore-optional
 
 # 复制前端源码
 COPY ui .
