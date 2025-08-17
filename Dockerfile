@@ -7,7 +7,8 @@
 # ✔ 保持与原 Dockerfile 功能一致
 
 # ============ Builder ============
-FROM registry.cn-hangzhou.aliyuncs.com/dragonwell/dragonwell:21.0.2 AS builder
+FROM dragonwell-registry.cn-hangzhou.cr.aliyuncs.com/dragonwell/dragonwell:21.0.4-extended-ga-ubuntu AS builder
+
 
 WORKDIR /application
 # 复制项目完整代码（推荐完整构建）
@@ -17,7 +18,7 @@ COPY . .
 RUN ./gradlew :application:bootJar -x test
 
 # ============ Runtime ============
-FROM registry.cn-hangzhou.aliyuncs.com/dragonwell/dragonwell:21.0.2
+FROM dragonwell-registry.cn-hangzhou.cr.aliyuncs.com/dragonwell/dragonwell:21.0.4-extended-ga-ubuntu
 LABEL maintainer="mokevin <kevin_mowen@163.com>"
 
 WORKDIR /application
