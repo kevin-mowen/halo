@@ -3,15 +3,14 @@
 # ============================
 
 # ============ Node.js Builder ============
-FROM node:18-alpine AS node-builder
+FROM node:18-slim AS node-builder
 
 # 安装必要的构建工具和 pnpm
-RUN apk add --no-cache \
-    python3 \
-    make \
-    g++ \
-    libc6-compat && \
-    npm install -g pnpm@10.12.4
+RUN apt-get update && \
+    apt-get install -y python3 make g++ && \
+    npm install -g pnpm@10.12.4 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /ui
 
@@ -24,8 +23,8 @@ ENV NODE_ENV=production
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-# 安装依赖，禁用可选依赖来避免平台特定问题
-RUN pnpm install --frozen-lockfile --no-optional
+# 安装依赖（不跳过可选依赖，让rolldown正确安装平台绑定）
+RUN pnpm install --frozen-lockfile
 
 # 复制前端源码
 COPY ui .
