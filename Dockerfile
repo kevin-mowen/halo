@@ -3,7 +3,7 @@
 # ============================
 
 # ============ Node.js Builder ============
-FROM node:18-slim AS node-builder
+FROM node:22.18-slim AS node-builder
 
 # 安装必要的构建工具和 pnpm
 RUN apt-get update && \
@@ -57,7 +57,7 @@ LABEL maintainer="mokevin <kevin_mowen@163.com>"
 # 安装Node.js来运行前端服务
 RUN apt-get update && \
     apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
     npm install -g pnpm@10.12.4 && \
     apt-get clean && \
