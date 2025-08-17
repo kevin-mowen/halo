@@ -29,8 +29,8 @@ RUN pnpm install --frozen-lockfile
 # 复制前端源码
 COPY ui .
 
-# 构建前端包
-RUN pnpm build:packages
+# 构建前端包和UI应用（跳过TypeScript检查）
+RUN pnpm build:packages && pnpm run build:console && pnpm run build:uc
 
 # ============ Java Builder ============
 FROM crpi-0nyhmsk4kaamfjub.cn-guangzhou.personal.cr.aliyuncs.com/mokevin/dragonwell:21 AS java-builder
