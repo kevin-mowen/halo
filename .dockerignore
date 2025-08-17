@@ -1,2 +1,11 @@
 .github
 .git
+node_modules
+**/node_modules
+gradle/caches
+gradle/daemon
+gradle/jdks
+gradle/native
+gradle/wrapper/dists
+gradle/.tmp
+*.log
