@@ -40,11 +40,14 @@ WORKDIR /application
 # 复制完整 Halo 项目源码
 COPY . .
 
+# 从Node.js构建阶段复制UI构建产物
+COPY --from=node-builder /ui/build/dist ./ui/build/dist
+
 # 修复gradlew的Windows换行符并确保执行权限
 RUN sed -i 's/\r$//' ./gradlew && chmod +x ./gradlew
 
-# 构建 Spring Boot jar（跳过测试和git属性生成）
-RUN ./gradlew :application:bootJar -x test -x generateGitProperties
+# 构建 Spring Boot jar（跳过测试、git属性生成和UI构建）
+RUN ./gradlew :application:bootJar -x test -x generateGitProperties -x :ui:build -x :ui:pnpmSetup -x :ui:pnpmInstall
 
 # ============ Runtime ============
 FROM crpi-0nyhmsk4kaamfjub.cn-guangzhou.personal.cr.aliyuncs.com/mokevin/dragonwell:21
