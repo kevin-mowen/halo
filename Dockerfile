@@ -10,8 +10,9 @@ WORKDIR /application
 # 复制完整 Halo 项目源码
 COPY . .
 
-# 构建 Spring Boot jar（跳过测试）
-RUN ./gradlew :application:bootJar -x test
+# 确保gradlew有执行权限，并构建 Spring Boot jar（跳过测试）
+# gradle的node插件会自动下载Node.js和管理前端构建
+RUN chmod +x ./gradlew && ./gradlew :application:bootJar -x test
 
 # ============ Runtime ============
 FROM crpi-0nyhmsk4kaamfjub.cn-guangzhou.personal.cr.aliyuncs.com/mokevin/dragonwell:21
